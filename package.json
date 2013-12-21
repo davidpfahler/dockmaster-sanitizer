@@ -1,6 +1,6 @@
 {
   "name": "dockmaster-sanitizer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "lib/dockmaster-sanitizer.js",
   "description": "node stream that sanitizes DockMaster webservice response data",
   "homepage": "https://github.com/excellenteasy/dockmaster-sanitizer",
