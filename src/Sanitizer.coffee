@@ -11,6 +11,7 @@ class Sanitizer extends Transform
 
   _flush: (callback) ->
     @push JSON.stringify @_sanitize @_chunks
+    @_chunks = ''
     callback()
 
   unwrap = (data) ->
