@@ -1,7 +1,7 @@
 {
   "name": "dockmaster-sanitizer",
   "version": "0.0.2",
-  "main": "lib/dockmaster-sanitizer.js",
+  "main": "lib/Sanitizer.js",
   "description": "node stream that sanitizes DockMaster webservice response data",
   "homepage": "https://github.com/excellenteasy/dockmaster-sanitizer",
   "bugs": "https://github.com/excellenteasy/dockmaster-sanitizer/issues",
@@ -26,8 +26,6 @@
   "scripts": {
     "build": "./node_modules/coffee-script/bin/coffee --bare --compile --output lib/ src/*.coffee",
     "prepublish": "./node_modules/coffee-script/bin/coffee --bare --compile --output lib/ src/*.coffee",
-    "postpublish": "rm -rf html man7 lib",
-    "postinstall": "./node_modules/coffee-script/bin/coffee --bare --compile --output lib/ src/*.coffee",
     "test": "grunt test"
   },
   "devDependencies": {
