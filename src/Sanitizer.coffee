@@ -55,9 +55,11 @@ class Sanitizer extends Transform
     data = data.d if data.d
     # If the response is empty, it will look something like '{"workorders":}'.
     # In that case, we need to return an empty object or array.
-    if /^\{\"[a-zA-Z]+\"\:\}$/.test data
-      # TODO: allow for other empty types like {} or "", depending on endpoint
-      data = []
+    debugger
+    if capture = data.match /^\{"([a-zA-Z]+)":\}$/
+      return switch capture[1]
+        when "workorders" then []
+        else {}
     # When the response does carry data, sometimes JSON.parse works, sometimes
     # not. Hence, we need try and if it fails continue untangling the
     # "custom JSON" (=invalid JSON) that was sent.
