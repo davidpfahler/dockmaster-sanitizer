@@ -39,41 +39,44 @@ class Sanitizer extends Transform
       return new Error capture[1]
 
     # capture responses sent when content-type was not x-www-form-urlencoded
-    regex = /<string xmlns="DBWC">(\{".+"\})<\/string>/
-    if capture = data.match regex
-      data = capture[1]
-      # the rest of the procedure can take it from here
+    if _.isString data
+      regex = /<string xmlns="DBWC">(\{".+"\})<\/string>/
+      if capture = data.match regex
+        data = capture[1]
+        # the rest of the procedure can take it from here
 
-    try
-      data = JSON.parse data
-    catch e
-      console.error e
-      console.log "initial response: #{data}"
-      return new Error "unable to parse initial response: "
-
-    # We begin to untangle the mess that is returned by the API
-    data = data.d if data.d
-    # If the response is empty, it will look something like '{"workorders":}'.
-    # In that case, we need to return an empty object or array.
-    debugger
-    if capture = data.match /^\{"([a-zA-Z]+)":\}$/
-      return switch capture[1]
-        when "workorders" then []
-        else {}
-    # When the response does carry data, sometimes JSON.parse works, sometimes
-    # not. Hence, we need try and if it fails continue untangling the
-    # "custom JSON" (=invalid JSON) that was sent.
-    else if _.isString data
+    unless _.isObject data
       try
         data = JSON.parse data
       catch e
-        try
-          data = eval("(function(){return #{data}})")()
-        catch err
-          data = new Error 'unable to parse the response'
+        console.error e
+        console.log "initial response: #{data}"
+        return new Error "unable to parse initial response: "
 
-      # Now, we can unwrap the parsed data
-      unwrap data
+    # We begin to untangle the mess that is returned by the API
+    data = data.d if data.d
+
+    if _.isString data
+    # If the response is empty, it will look something like '{"workorders":}'.
+    # In that case, we need to return an empty object or array.
+      if capture = data.match /^\{"([a-zA-Z]+)":\}$/
+        return switch capture[1]
+          when "workorders" then []
+          else {}
+      # When the response does carry data, sometimes JSON.parse works, sometimes
+      # not. Hence, we need try and if it fails continue untangling the
+      # "custom JSON" (=invalid JSON) that was sent.
+      else
+        try
+          data = JSON.parse data
+        catch e
+          try
+            data = eval("(function(){return #{data}})")()
+          catch err
+            data = new Error 'unable to parse the response'
+
+        # Now, we can unwrap the parsed data
+        unwrap data
     else
       return data
 
